@@ -1,0 +1,17 @@
+.
+├── dir.txt
+├── index.html
+├── index.js
+├── lib
+│   ├── model
+│   │   ├── doc.js
+│   │   └── site.js
+│   ├── utils.js
+│   └── view
+│       ├── editor.js
+│       ├── event_bus.js
+│       └── textarea_monitor.js
+├── package.json
+└── README.md
+
+3 directories, 11 files

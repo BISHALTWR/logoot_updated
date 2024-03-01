@@ -7,6 +7,8 @@ import { dirname } from 'path';
 const events = [];
 const cursors = {};
 
+const allowedOrigin = 'https://logoot-updated.onrender.com';
+
 function serve(res, file) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
@@ -23,12 +25,17 @@ function serve(res, file) {
   readStream.pipe(res);
 }
 
-function handleOptionsRequest(res) {
-  res.writeHead(200, {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  });
+function handleOptionsRequest(res, req) {
+  const requestOrigin = req.headers.origin;
+  if (requestOrigin === allowedOrigin) {
+    res.writeHead(200, {
+      'Access-Control-Allow-Origin': requestOrigin,
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    });
+  } else {
+    res.writeHead(403, { 'Content-Type': 'text/plain' });
+  }
   res.end();
 }
 
@@ -56,7 +63,10 @@ function handleReceiveRequest(res, reqBody) {
 
 const server = http.createServer((req, res) => {
   let reqBody = '';
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const requestOrigin = req.headers.origin;
+  if (requestOrigin === allowedOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+  }
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   req.on('data', (data) => reqBody += data);
   req.on('end', () => {
